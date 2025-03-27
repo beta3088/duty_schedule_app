@@ -2,21 +2,20 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from datetime import date, timedelta
 from database import get_db, query_db, execute_db, get_valid_staff, get_staff_by_name, add_staff, update_staff_status, get_all_staff
 from functools import wraps
-import random
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # 用于 session 加密，请务必更改
 
 def login_required(role=None):
     def decorator(fn):
-        @wraps(fn)
         def wrapper(*args, **kwargs):
             if not session.get('user_id'):
                 return redirect(url_for('login'))
             if role and session.get('user_role') != role:
                 return render_template('error.html', message='无权限访问'), 403
             return fn(*args, **kwargs)
-        return decorator
+        wrapper.__name__ = fn.__name__  # 手动设置 wrapper 函数的 __name__ 属性
+        return wrapper
     return decorator
 
 @app.route('/login', methods=['GET', 'POST'])
