@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>初始化排班</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>初始化排班</h1>
+    <p><a href="{{ url_for('index') }}">返回首页</a></p>
+    <form method="POST" action="{{ url_for('init_schedule') }}">
+        <div>
+            <label for="year">年份:</label>
+            <input type="number" id="year" name="year" value="{{ date.today().year }}" required>
+        </div>
+        <button type="submit">初始化</button>
+    </form>
+</body>
+</html>

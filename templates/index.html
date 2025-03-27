@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>值班表 - {{ year }}</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body>
+    <h1>{{ year }} 值班表</h1>
+    {% if session['username'] %}
+        <p>欢迎，{{ session['username'] }} | <a href="{{ url_for('logout') }}">退出</a></p>
+        {% if session['user_role'] == 'admin' %}
+            <button onclick="location.href='{{ url_for('init_schedule_form') }}'">初始化排班</button>
+            <button onclick="location.href='{{ url_for('update_schedule_form') }}'">更新排班</button>
+            <button onclick="location.href='{{ url_for('manage_staff') }}'">管理员工</button>
+        {% endif %}
+    {% else %}
+        <p><a href="{{ url_for('login') }}">登录</a></p>
+    {% endif %}
+
+    <div>
+        {% for month in range(1, 13) %}
+            <h2>{{ year }}年 {{ month }}月</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>日</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set first_day = date(year, month, 1) %}
+                    {% set last_day = date(year, month, 1) + timedelta(days=first_day.replace(day=28).days) %}
+                    <tr>
+                        {% for i in range(first_day.weekday() + 1) %}
+                            <td></td>
+                        {% endfor %}
+                        {% set current_day = first_day %}
+                        {% while current_day <= last_day %}
+                            <td{% if session['user_role'] == 'admin' %} class="draggable"{% endif %} data-date="{{ current_day.strftime('%Y-%m-%d') }}">
+                                {{ current_day.day }}
+                                {% set schedule = schedule_data.get(current_day) %}
+                                {% if schedule %}
+                                    <br><span style="background-color: {{ staff_colors.get(schedule, '#ccc') }}; padding: 2px;">{{ schedule }}</span>
+                                {% endif %}
+                            </td>
+                            {% if (loop.index + first_day.weekday()) % 7 == 0 %}
+                                </tr><tr>
+                            {% endif %}
+                            {% set current_day = current_day + timedelta(days=1) %}
+                        {% endwhile %}
+                        {% for i in range(7 - (last_day.weekday() + 1)) %}
+                            <td></td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        {% endfor %}
+    </div>
+</body>
+</html>

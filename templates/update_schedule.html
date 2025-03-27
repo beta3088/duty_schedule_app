@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>更新排班</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/flatpickr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/flatpickr.min.js"></script>
+</head>
+<body>
+    <h1>更新排班</h1>
+    <p><a href="{{ url_for('index') }}">返回首页</a></p>
+    <form method="POST" action="{{ url_for('update_schedule') }}">
+        <div>
+            <label for="start_date">开始日期:</label>
+            <input type="text" id="start_date" name="start_date" required>
+        </div>
+        <div>
+            <label for="remove_staff">删除的人员:</label>
+            <select id="remove_staff" name="remove_staff">
+                <option value="">无</option>
+                {% for staff in staff_list %}
+                    <option value="{{ staff.id }}">{{ staff.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="add_staff">新增的人员 (可输入多个，用逗号分隔):</label>
+            <input type="text" id="add_staff" name="add_staff">
+        </div>
+        <button type="submit">提交</button>
+    </form>
+
+    <script>
+        flatpickr("#start_date", {
+            dateFormat: "Y-m-d",
+            minDate: new Date()
+        });
+    </script>
+</body>
+</html>

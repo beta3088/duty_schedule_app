@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>管理员工</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>管理员工</h1>
+    <p><a href="{{ url_for('index') }}">返回首页</a></p>
+    <button onclick="location.href='{{ url_for('manage_staff_form') }}'">添加新员工</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>姓名</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for staff in staff_list %}
+            <tr>
+                <td>{{ staff.id }}</td>
+                <td>{{ staff.name }}</td>
+                <td>{{ staff.status }}</td>
+                <td>
+                    {% if staff.status == '有效' %}
+                    <form method="POST" action="{{ url_for('delete_staff', staff_id=staff.id) }}" style="display: inline;">
+                        <button type="submit">删除</button>
+                    </form>
+                    {% else %}
+                    <form method="POST" action="{{ url_for('add_staff_route') }}" style="display: inline;">
+                        <input type="hidden" name="name" value="{{ staff.name }}">
+                        <button type="submit">恢复</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
